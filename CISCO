@@ -1,0 +1,302 @@
+Occurence	
+16	    Word Search II
+16	    Rotate Image	
+11	    Maximum Subarray	
+11	    Expressive Word
+9	      Decode Ways	
+8	      Validate IP Address	
+8	      Decode String	
+6	      House Robber	
+6	      Maximum Difference Between Increasing Elements	
+5	      Valid Parentheses
+4	      Number of 1 Bits	
+3	      Top K Frequent Elements	
+3	      Beautiful Arrangement	
+3	      Unique Paths II	
+2	      Coin Change 2	
+2	      First Bad Version	
+2	      Maximum Population Year
+2	      Best Time to Buy and Sell Stock	
+2	      Find Pivot Index	
+2	      Merge Intervals
+=======================================================================================================
+UNIQUE PATH :
+
+public class _63 {
+    public static class Solution1 {
+        public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+            if (obstacleGrid == null || obstacleGrid.length == 0) {
+                return 0;
+            }
+
+            int height = obstacleGrid.length;
+            int width = obstacleGrid[0].length;
+            int[][] dp = new int[height][width];
+            dp[0][0] = obstacleGrid[0][0] == 1 ? 0 : 1;
+            for (int i = 1; i < height; i++) {
+                dp[i][0] = obstacleGrid[i][0] == 1 ? 0 : dp[i - 1][0];
+            }
+            for (int j = 1; j < width; j++) {
+                dp[0][j] = obstacleGrid[0][j] == 1 ? 0 : dp[0][j - 1];
+            }
+
+            for (int i = 1; i < height; i++) {
+                for (int j = 1; j < width; j++) {
+                    if (obstacleGrid[i][j] == 1) {
+                        dp[i][j] = 0;
+                    } else {
+                        int paths = 0;
+                        if (obstacleGrid[i - 1][j] == 0) {
+                            paths += dp[i - 1][j];
+                        }
+                        if (obstacleGrid[i][j - 1] == 0) {
+                            paths += dp[i][j - 1];
+                        }
+                        dp[i][j] = paths;
+                    }
+                }
+            }
+            return dp[height - 1][width - 1];
+        }
+    }
+}
+=================================================================================================
+COIN CHANGE:
+
+public class _518 {
+    public static class Solution1 {
+        public int change(int amount, int[] coins) {
+            int[] ways = new int[amount + 1];
+            ways[0] = 1;
+            for (int denom : coins) {
+                for (int i = 0; i < ways.length; i++) {
+                    if (denom <= i) {
+                        ways[i] += ways[i - denom];
+                    }
+                }
+            }
+            return ways[amount];
+        }
+    }
+}
+================================================================================================
+MAXIMUM POPULATION YEAR:
+
+import java.util.TreeMap;
+
+public class _1854 {
+    public static class Solution1 {
+        public int maximumPopulation(int[][] logs) {
+            TreeMap<Integer, Integer> map = new TreeMap<>();
+            for (int[] log : logs) {
+                for (int start = log[0]; start < log[1]; start++) {
+                    map.put(start, map.getOrDefault(start, 0) + 1);
+                }
+            }
+            int maxPop = 0;
+            int maxPopYear = 0;
+            for (int year : map.keySet()) {
+                if (map.get(year) > maxPop) {
+                    maxPop = map.get(year);
+                    maxPopYear = year;
+                }
+            }
+            return maxPopYear;
+        }
+    }
+}
+===============================================================================================
+FIRST BAD VERSION :
+
+public class _278 {
+
+    public static class Solution1 {
+        public int firstBadVersion(int n) {
+            int left = 1;
+            int right = n;
+            while (left < right) {
+                int mid = left + (right - left) / 2;
+                if (isBadVersion(mid)) {
+                    right = mid;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            return left;
+        }
+
+        private boolean isBadVersion(int left) {
+            return false;
+        }
+    }
+}
+====================================================================================================
+DECODE WAYS :
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class _91 {
+   
+    public static class Solution1 {
+        public int numDecodings(String s) {
+            if (s == null || s.length() == 0) {
+                return 0;
+            }
+            int[] dp = new int[s.length() + 1];
+            dp[0] = 1;
+            dp[1] = (s.charAt(0) != '0') ? 1 : 0;
+            for (int i = 2; i <= s.length(); i++) {
+                int first = Integer.valueOf(s.substring(i - 1, i));
+                int second = Integer.valueOf(s.substring(i - 2, i));
+                if (first > 0 && first <= 9) {
+                    dp[i] += dp[i - 1];
+                }
+                if (second >= 10 && second <= 26) {
+                    dp[i] += dp[i - 2];
+                }
+            }
+            return dp[s.length()];
+        }
+    }
+
+    public static class Solution2 {
+
+        public int numDecodings(String s) {
+            return dp(new HashMap<>(), s, 0);
+        }
+
+        private int dp(Map<Integer, Integer> cache, String s, int index) {
+            if (cache.containsKey(index)) {
+                return cache.get(index);
+            }
+            if (index == s.length()) {
+              
+                return 1;
+            }
+            if (s.charAt(index) == '0') {
+                
+                return 0;
+            }
+            if (index == s.length() - 1) {
+                return 1;
+            }
+            int ways = dp(cache, s, index + 1);
+            if (Integer.parseInt(s.substring(index, index + 2)) <= 26) {
+                ways += dp(cache, s, index + 2);
+            }
+            cache.put(index, ways);
+            return cache.get(index);
+        }
+    }
+}
+===================================================================================================
+VALID IP ADDRESS:
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+public class _468 {
+
+    public static class Solution1 {
+
+        static final String NEITHER = "Neither";
+
+        public String validIPAddress(String IP) {
+            if (IP.contains(".")) {
+                return isValidIPv4(IP);
+            } else if (IP.contains(":")) {
+                return isValidIPv6(IP);
+            } else {
+                return NEITHER;
+            }
+        }
+
+        private String isValidIPv6(String IP) {
+            if (getDelimiterCount(IP, ':') != 7) {
+                return NEITHER;
+            }
+            String[] bytes = IP.split("\\:");
+            if (bytes.length != 8) {
+                return NEITHER;
+            }
+            for (int i = 0; i < 8; i++) {
+                if (hasInvalidIPV6Char(bytes[i])) {
+                    return NEITHER;
+                }
+                try {
+                    if (bytes[i].length() > 4) {
+                        return NEITHER;
+                    }
+                    int intNum = Integer.parseInt(bytes[i], 16);
+                    if (intNum < 0) {
+                        return NEITHER;
+                    }
+                    if (i == 0 && intNum != 0 && bytes[i].charAt(0) == '0') {
+                        return NEITHER;
+                    }
+                } catch (Exception e) {
+                    return NEITHER;
+                }
+
+            }
+            return "IPv6";
+        }
+
+        private String isValidIPv4(String IP) {
+            if (getDelimiterCount(IP, '.') != 3) {
+                return NEITHER;
+            }
+            String[] bytes = IP.split("\\.");
+            if (bytes.length != 4) {
+                return NEITHER;
+            }
+            for (String num : bytes) {
+                try {
+                    int intNum = Integer.parseInt(num);
+                    if (intNum > 255 || intNum < 0) {
+                        return NEITHER;
+                    }
+                    if (intNum != 0) {
+                        for (int i = 0; i < num.length(); i++) {
+                            if (num.charAt(i) == '0') {
+                                return NEITHER;
+                            } else {
+                                break;
+                            }
+                        }
+                    } else if (intNum == 0) {
+                        if (num.length() != 1) {
+                            return NEITHER;
+                        }
+                    }
+                } catch (Exception e) {
+                    return NEITHER;
+                }
+            }
+            return "IPv4";
+        }
+
+        private boolean hasInvalidIPV6Char(String str) {
+            Set<Character> set = new HashSet<>(Arrays.asList('0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                    'a', 'b', 'c', 'd', 'e', 'f', 'A', 'B', 'C', 'D', 'E', 'F'));
+            for (char c : str.toCharArray()) {
+                if (!set.contains(c)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private int getDelimiterCount(String ip, char delimiter) {
+            int count = 0;
+            for (char c : ip.toCharArray()) {
+                if (c == delimiter) {
+                    count++;
+                }
+            }
+            return count;
+        }
+    }
+}
