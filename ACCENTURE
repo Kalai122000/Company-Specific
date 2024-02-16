@@ -1,0 +1,171 @@
+https://leetcode.com/problems/find-subsequence-of-length-k-with-the-largest-sum/	Find Subsequence of Length K With the Largest Sum	 1
+
+https://leetcode.com/problems/count-odd-numbers-in-an-interval-range/	                Count Odd Numbers in an Interval Range	                 2
+
+https://leetcode.com/problems/merge-two-sorted-lists/	                                Merge Two Sorted Lists	2
+
+https://leetcode.com/problems/palindrome-number/	                                Palindrome Number	2
+
+https://leetcode.com/problems/two-sum/	                                                Two Sum	3
+
+
+TWO SUM :
+import java.util.HashMap;
+import java.util.Map;
+
+public class _1 {
+
+    public static class Solution1 {
+        public int[] twoSum(int[] nums, int target) {
+            Map<Integer, Integer> map = new HashMap();
+            for (int i = 0; i < nums.length; i++) {
+                if (map.containsKey(target - nums[i])) {
+                    return new int[]{map.get(target - nums[i]), i};
+                } else {
+                    map.put(nums[i], i);
+                }
+            }
+            return new int[]{-1, -1};
+        }
+    }
+
+}
+
+
+#include <vector>
+#include <unordered_map>
+using namespace std;
+
+class Solution {
+public:
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int, int> m;
+        vector<int> result;
+        for(int i = 0; i < nums.size(); i++){
+            if (m.find(nums[i]) == m.end() ) {
+                m[target - nums[i]] = i;
+            } else {
+                result.push_back(m[nums[i]]);
+                result.push_back(i);
+                break;
+            }
+        }
+        return result;
+    }
+};
+==========================================================================================
+COUNT THE ODD NUMBER IN AN INTERVAL RANGE:
+public class _1523 {
+    public static class Solution1 {
+        public int countOdds(int low, int high) {
+            if (low % 2 != 0 || high % 2 != 0) {
+                return (high - low) / 2 + 1;
+            }
+            return (high - low) / 2;
+        }
+    }
+}
+=========================================================================================
+MERGE TWO SORTED LIST:
+public class _21 {
+    public static class Solution1 {
+        /**
+         * recursive solution
+         * Time: O(m+n)
+         * Space: O(m+n)
+         * */
+        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+            if (l1 == null) {
+                return l2;
+            }
+            if (l2 == null) {
+                return l1;
+            }
+            if (l1.val < l2.val) {
+                l1.next = mergeTwoLists(l1.next, l2);
+                return l1;
+            } else {
+                l2.next = mergeTwoLists(l1, l2.next);
+                return l2;
+            }
+        }
+    }
+
+    public static class Solution2 {
+        /**
+         * iterative solution
+         * Time: O(m+n)
+         * Space: O(1)
+         */
+        public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+            ListNode pre = new ListNode(-1);
+            ListNode curr = pre;
+
+            while (l1 != null && l2 != null) {
+                if (l1.val < l2.val) {
+                    curr.next = l1;
+                    l1 = l1.next;
+                } else {
+                    curr.next = l2;
+                    l2 = l2.next;
+                }
+                curr = curr.next;
+            }
+
+            curr.next = l1 == null ? l2 : l1;
+            return pre.next;
+        }
+    }
+
+}
+=======================================================================================
+PALINDROMIC NUMBER:
+public class _9 {
+    public static class Solution1 {
+        public boolean isPalindrome(int x) {
+            if (x < 0) {
+                return false;
+            } else if (x == 0) {
+                return true;
+            } else if (x % 10 == 0) {
+                return false;
+            }
+            int reversed = 0;
+            while (x > reversed) {
+                int digit = x % 10;
+                reversed *= 10;
+                reversed += digit;
+                x /= 10;
+            }
+            return (x == reversed || x == reversed / 10);
+        }
+    }
+
+}
+=========================================================================================
+FIND THE SUBSEQUENCE OF LENGTH K WITH THE LARGEST SUM:
+import java.util.Arrays;
+
+public class _2099 {
+    public static class Solution1 {
+        public int[] maxSubsequence(int[] nums, int k) {
+            int[][] map = new int[nums.length][2];
+            for (int i = 0; i < nums.length; i++) {
+                map[i][0] = nums[i];
+                map[i][1] = i;
+            }
+            Arrays.sort(map, (a, b) -> b[0] - a[0]);
+            int[][] arr = new int[k][2];
+            for (int i = 0; i < k; i++) {
+                arr[i][0] = map[i][0];
+                arr[i][1] = map[i][1];
+            }
+            Arrays.sort(arr, (a, b) -> a[1] - b[1]);
+            int[] ans = new int[k];
+            for (int i = 0; i < k; i++) {
+                ans[i] = arr[i][0];
+            }
+            return ans;
+        }
+    }
+}
