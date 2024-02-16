@@ -1,0 +1,208 @@
+Occurence
+40	  Two Sum	
+20	  LRU Cache	
+19	  Add Two Numbers
+18	  Merge Intervals	
+17	  Maximum Subarray	
+16	  Longest Substring Without Repeating Characters	
+15	  Median of Two Sorted Arrays	
+14	  Longest Common Prefix	
+13	  Roman to Integer
+11	  Spiral Matrix	
+11	  Group Anagrams	
+11	  Number of Islands	
+10	  Word Break	
+10	  Product of Array Except Self
+10	  3Sum	
+9	    Generate Parentheses	
+8	    Rotate Image	
+8	    Move Zeroes	
+8	    Best Time to Buy and Sell Stock	
+8	    Merge k Sorted Lists	
+
+=====================================================================================================================
+LONGEST SUBSTRING WITHOUT REPEATING CHARACTERS:
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        
+        if(s.find_first_not_of(' ') != string::npos){
+            int visit[150];
+            memset(visit,0,sizeof(visit));
+            
+            int mx=0,x=0;
+            for(int i=0;i<s.size();i++){
+                if(visit[s[i]]==0){
+                    visit[s[i]]++;
+                    x++;
+                }else{
+                    mx = max(mx,x);
+                    //back to (i-x) index for relooping from the double occurance
+                    if(x>0) i-=x;
+                    x=0;
+                    memset(visit,0,sizeof(visit));
+                }
+            }
+            mx = max(x,mx);
+            return mx;
+        }else{
+            // There's a only white-spaces.
+            if(s.size()>0) return 1;
+            else return 0;
+        }
+        
+    }
+};
+
+ANOTHER METHOD: 
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+    
+        unordered_map <char,int> ump;
+            
+        int mx=0,x=0;
+        for(int i=0;i<s.size();i++){
+            if(ump[s[i]]==0){
+                ump[s[i]]++;
+                x++;
+            }else{
+                mx = max(mx,x);
+                //back to (i-x) index for relooping from the double occurance
+                if(x>0) i-=x;
+                x=0;
+                ump.clear();
+            }
+        }
+        mx = max(x,mx);
+        return mx;
+        
+    }
+};
+
+========================================================================================================
+WORD BREAK:
+
+import java.util.List;
+
+public class _139 {
+
+    public static class Solution1 {
+        public boolean wordBreak(String s, List<String> wordDict) {
+            int n = s.length();
+            boolean[] dp = new boolean[n + 1];
+            dp[0] = true;
+            for (int i = 1; i <= n; i++) {
+                for (int j = 0; j < i; j++) {
+                    if (dp[j] && wordDict.contains(s.substring(j, i))) {
+                        dp[i] = true;
+                        break;
+                    }
+                }
+            }
+            return dp[n];
+        }
+    }
+
+    public static class Solution2 {
+        public boolean wordBreak(String s, List<String> wordDict) {
+            int maxLen = Integer.MIN_VALUE;
+            for (String word : wordDict) {
+                maxLen = (word.length() > maxLen) ? word.length() : maxLen;
+            }
+
+            int n = s.length();
+            boolean[] dp = new boolean[n + 1];
+            dp[0] = true;
+            for (int i = 1; i <= n; i++) {
+                for (int j = 0; j < i; j++) {
+                    if ((i - j) > maxLen) {
+                        continue;
+                    }
+                    if (dp[j] && wordDict.contains(s.substring(j, i))) {
+                        dp[i] = true;
+                        break;
+                    }
+                }
+            }
+            return dp[n];
+        }
+    }
+
+    public static class Solution3 {
+        public boolean wordBreak(String s, List<String> wordDict) {
+            int maxLen = Integer.MIN_VALUE;
+            for (String word : wordDict) {
+                maxLen = (word.length() > maxLen) ? word.length() : maxLen;
+            }
+
+            int n = s.length();
+            boolean[] dp = new boolean[n + 1];
+            dp[0] = true;
+            for (int i = 1; i <= n; i++) {
+                for (int lastWordLength = 1; lastWordLength <= i && lastWordLength <= maxLen; lastWordLength++) {
+                    if (dp[i - lastWordLength] && wordDict.contains(s.substring(i - lastWordLength, i))) {
+                        dp[i] = true;
+                        break;
+                    }
+                }
+            }
+            return dp[n];
+        }
+    }
+
+}
+======================================================================================================================
+GENERATE PRENTHESIS:
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class _22 {
+    public static class Solution1 {
+        public List<String> generateParenthesis(int n) {
+            List<String> result = new ArrayList();
+            backtrack(result, "", 0, 0, n);
+            return result;
+        }
+
+        void backtrack(List<String> result, String str, int left, int right, int max) {
+            if (str.length() == max * 2) {
+                result.add(str);
+                return;
+            }
+
+            if (left < max) {
+                backtrack(result, str + "(", left + 1, right, max);
+            }
+
+            if (right < left) {
+                backtrack(result, str + ")", left, right + 1, max);
+            }
+        }
+    }
+
+    public static class Solution2 {
+        public List<String> generateParenthesis(int n) {
+            List<String> result = new ArrayList();
+            if (n == 0) {
+                return result;
+            }
+            backtrack(result, "", n, n);
+            return result;
+        }
+
+        void backtrack(List<String> result, String parenthesis, int left, int right) {
+            if (left > 0) {
+                backtrack(result, parenthesis + "(", left - 1, right);
+            }
+            if (right > left) {
+                backtrack(result, parenthesis + ")", left, right - 1);
+            }
+            if (right == 0) {
+                result.add(parenthesis);
+            }
+        }
+    }
+}
